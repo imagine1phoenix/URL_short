@@ -22,19 +22,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Session configuration using connect-pg-simple
+app.set('trust proxy', 1);
+
 app.use(session({
     store: new pgSession({
         pool: pool,
         createTableIfMissing: true
     }),
-    secret: 'super-secret-production-key-change-me',
+    secret: process.env.SESSION_SECRET || 'super-secret-production-key-change-me',
     resave: false,
     saveUninitialized: false,
     cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
         httpOnly: true,
         sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production'
+        secure: true, // Force HTTPS in production
+        domain: undefined // Let browser handle domain
     }
 }));
 
