@@ -32,8 +32,8 @@ router.get('/:shortCode', async (req, res, next) => {
                 <html>
                      <body style="font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #111111; color: #f9f9f7;">
                          <div style="text-align: center; border: 1px solid #f9f9f7; padding: 2rem;">
-                            <h1 style="color: #f59e0b;">Link Inactive</h1>
-                            <p>This short link has been disabled by its owner.</p>
+                            <h1 style="color: #f59e0b;">Link Paused</h1>
+                            <p>This short link has been temporarily paused by its owner.</p>
                         </div>
                     </body>
                 </html>

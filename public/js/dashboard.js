@@ -124,7 +124,7 @@ function renderLinks(links) {
 
         let statusBadge = '';
         if (link.is_active === 0) {
-            statusBadge = '<span class="badge badge-inactive">CENSORED</span>';
+            statusBadge = '<span class="badge badge-inactive">PAUSED</span>';
         } else if (isExpired) {
             statusBadge = '<span class="badge badge-expired">CONCLUDED</span>';
         } else {
@@ -165,7 +165,7 @@ function renderLinks(links) {
                 <button class="btn-secondary btn-sm copy-btn" data-url="${shortUrlFull}">DUPLICATE</button>
                 <button class="btn-secondary btn-sm edit-btn" data-id="${link.id}" data-url="${link.original_url}">AMEND</button>
                 <button class="btn-${link.is_active ? 'invert' : 'secondary'} btn-sm toggle-status-btn" data-id="${link.id}" data-active="${link.is_active}">
-                    ${link.is_active ? 'CENSOR' : 'RESTORE'}
+                    ${link.is_active ? 'PAUSE' : 'UNPAUSE'}
                 </button>
             </div>
         `;
