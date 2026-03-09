@@ -1,48 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Snip — URL Shortener</title>
-  <meta name="description" content="Transform long URLs into powerful short links with built-in analytics. Fast, free, and beautifully designed.">
+  <meta name="description"
+    content="Transform long URLs into powerful short links with built-in analytics. Fast, free, and beautifully designed.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
 
-  <!-- Background glow effects -->
-  <div class="bg-glow bg-glow--purple"></div>
-  <div class="bg-glow bg-glow--blue"></div>
-  <div class="bg-noise"></div>
+  <!-- Newsprint grain overlay -->
+  <div class="bg-grain"></div>
+
+  <!-- Masthead -->
+  <header class="masthead">
+    <div class="masthead__rule masthead__rule--heavy"></div>
+    <div class="masthead__inner">
+      <span class="masthead__edition">EST. 2026 — DIGITAL EDITION</span>
+      <h1 class="masthead__title">THE SNIP GAZETTE</h1>
+      <span class="masthead__tagline">YOUR TRUSTED SOURCE FOR SHORT LINKS</span>
+    </div>
+    <div class="masthead__rule masthead__rule--thin"></div>
+    <div class="masthead__rule masthead__rule--double"></div>
+  </header>
 
   <main class="container">
 
     <!-- Hero Section -->
-    <header class="hero" id="hero">
-      <div class="hero__glow"></div>
-      <h1 class="hero__title">Shorten. Share. Track.</h1>
-      <p class="hero__subtitle">Transform long URLs into powerful short links with built-in analytics</p>
-    </header>
+    <section class="hero" id="hero">
+      <div class="hero__content">
+        <p class="hero__dateline">BREAKING — URL INTELLIGENCE</p>
+        <h2 class="hero__title">Shorten. Share. Track.</h2>
+        <p class="hero__subtitle">Transform long URLs into powerful short links with built-in analytics</p>
+      </div>
+    </section>
+
+    <div class="divider divider--heavy"></div>
 
     <!-- URL Input Section -->
     <section class="shorten-section" id="shorten-section">
+      <span class="section-label">SUBMIT A URL</span>
       <form class="shorten-form" id="shorten-form" novalidate>
         <div class="shorten-form__input-wrapper">
-          <input
-            type="url"
-            id="url-input"
-            class="shorten-form__input"
-            placeholder="Paste your long URL here..."
-            autocomplete="off"
-            spellcheck="false"
-            required
-          >
+          <input type="url" id="url-input" class="shorten-form__input" placeholder="Paste your long URL here..."
+            autocomplete="off" spellcheck="false" required>
           <span class="shorten-form__validation" id="input-validation"></span>
         </div>
         <button type="submit" class="shorten-form__button" id="shorten-button">
-          <span class="shorten-form__button-text" id="button-text">Shorten →</span>
+          <span class="shorten-form__button-text" id="button-text">SHORTEN →</span>
           <span class="shorten-form__spinner" id="button-spinner"></span>
         </button>
       </form>
@@ -52,30 +65,33 @@
     <section class="result-section" id="result-section" aria-hidden="true">
       <div class="result-card">
         <div class="result-card__header">
-          <span class="result-card__label">Your shortened URL</span>
+          <span class="result-card__label">YOUR SHORTENED URL</span>
         </div>
         <div class="result-card__body">
-          <a href="#" class="result-card__short-url" id="result-short-url" target="_blank" rel="noopener noreferrer"></a>
+          <a href="#" class="result-card__short-url" id="result-short-url" target="_blank"
+            rel="noopener noreferrer"></a>
           <button class="result-card__copy-btn" id="result-copy-btn" type="button">
-            <span id="result-copy-text">📋 Copy</span>
+            <span id="result-copy-text">COPY</span>
           </button>
         </div>
         <p class="result-card__original" id="result-original-url"></p>
       </div>
     </section>
 
+    <div class="divider divider--heavy"></div>
+
     <!-- Links Dashboard Section -->
     <section class="dashboard-section" id="dashboard-section">
       <div class="dashboard-section__header">
         <h2 class="dashboard-section__title">
-          Your Links
+          YOUR LINKS
           <span class="dashboard-section__count" id="links-count"></span>
         </h2>
       </div>
 
       <!-- Empty State -->
       <div class="empty-state" id="empty-state">
-        <p class="empty-state__text">No links yet. Shorten your first URL above! 🔗</p>
+        <p class="empty-state__text">No links yet. Shorten your first URL above!</p>
       </div>
 
       <!-- Links List -->
@@ -84,9 +100,16 @@
 
   </main>
 
+  <!-- Footer rule -->
+  <footer class="footer">
+    <div class="divider divider--heavy"></div>
+    <p class="footer__text">© 2026 THE SNIP GAZETTE — ALL LINKS RESERVED</p>
+  </footer>
+
   <!-- Toast Container -->
   <div class="toast-container" id="toast-container"></div>
 
   <script src="/js/app.js"></script>
 </body>
+
 </html>

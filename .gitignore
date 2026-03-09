@@ -1,1 +1,6 @@
-/node_modules
+node_modules/
+url_shortener.db
+url_shortener.db-wal
+url_shortener.db-shm
+.DS_Store
+*.log
