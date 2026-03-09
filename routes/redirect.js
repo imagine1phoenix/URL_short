@@ -1,134 +1,67 @@
-const express = require('express');
-const db = require('../database');
+import express from 'express';
+import pool from '../database.js';
 
 const router = express.Router();
 
-// Prepared statements
-const findByCode = db.prepare(
-  'SELECT * FROM links WHERE short_code = ?'
-);
-const incrementClicks = db.prepare(
-  'UPDATE links SET clicks = clicks + 1 WHERE short_code = ?'
-);
-
-/**
- * GET /:shortCode
- * Redirect to the original URL and increment click count
- */
-router.get('/:shortCode', (req, res) => {
+router.get('/:shortCode', async (req, res, next) => {
   const { shortCode } = req.params;
 
-  // Only process alphanumeric codes of length 7
-  if (!/^[a-zA-Z0-9]{7}$/.test(shortCode)) {
-    return res.status(404).send(generate404Page());
+  if (shortCode === 'api' || shortCode === 'css' || shortCode === 'js' || shortCode === 'dashboard.html' || shortCode === 'index.html') {
+    return next();
   }
 
   try {
-    const link = findByCode.get(shortCode);
+    const result = await pool.query('SELECT * FROM links WHERE short_code = $1', [shortCode]);
+    const link = result.rows[0];
 
     if (!link) {
-      return res.status(404).send(generate404Page());
+      return res.status(404).send(`
+                <html>
+                    <body style="font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #111111; color: #f9f9f7;">
+                        <div style="text-align: center; border: 1px solid #f9f9f7; padding: 2rem;">
+                            <h1 style="color: #ef4444;">404 Not Found</h1>
+                            <p>The short link you provided does not exist.</p>
+                        </div>
+                    </body>
+                </html>
+            `);
     }
 
-    // Atomically increment the click counter
-    incrementClicks.run(shortCode);
+    if (link.is_active === 0) {
+      return res.status(403).send(`
+                <html>
+                     <body style="font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #111111; color: #f9f9f7;">
+                         <div style="text-align: center; border: 1px solid #f9f9f7; padding: 2rem;">
+                            <h1 style="color: #f59e0b;">Link Inactive</h1>
+                            <p>This short link has been disabled by its owner.</p>
+                        </div>
+                    </body>
+                </html>
+            `);
+    }
 
-    // 302 redirect to the original URL
-    res.redirect(302, link.original_url);
-  } catch (err) {
-    console.error('Redirect error:', err.message);
+    if (link.max_clicks !== null && link.clicks >= link.max_clicks) {
+      return res.status(410).send(`
+                <html>
+                     <body style="font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #111111; color: #f9f9f7;">
+                         <div style="text-align: center; border: 1px solid #f9f9f7; padding: 2rem;">
+                            <h1 style="color: #ef4444;">Link Expired</h1>
+                            <p>This short link has reached its maximum click limit and is no longer available.</p>
+                        </div>
+                    </body>
+                </html>
+            `);
+    }
+
+    const now = new Date().toISOString();
+    await pool.query('UPDATE links SET clicks = clicks + 1, last_accessed_at = $1 WHERE id = $2', [now, link.id]);
+
+    res.redirect(link.original_url);
+
+  } catch (error) {
+    console.error('Redirection Error:', error);
     res.status(500).send('Internal Server Error');
   }
 });
 
-/**
- * Generate a styled 404 page
- */
-function generate404Page() {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>404 — Link Not Found</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', 'Helvetica Neue', sans-serif;
-      background: #F9F9F7;
-      color: #111111;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      text-align: center;
-    }
-    .container {
-      max-width: 480px;
-      padding: 2rem;
-    }
-    .rule { height: 4px; background: #111111; margin-bottom: 2rem; }
-    .code {
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 7rem;
-      font-weight: 700;
-      color: #CC0000;
-      line-height: 1;
-      margin-bottom: 0.75rem;
-    }
-    .label {
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: #737373;
-      margin-bottom: 1rem;
-    }
-    h1 {
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 0.75rem;
-    }
-    p {
-      font-family: Georgia, 'Times New Roman', serif;
-      color: #737373;
-      font-size: 1rem;
-      line-height: 1.6;
-      font-style: italic;
-      margin-bottom: 2rem;
-    }
-    a {
-      display: inline-block;
-      padding: 0.75rem 2rem;
-      background: #111111;
-      color: #F9F9F7;
-      text-decoration: none;
-      border-radius: 0;
-      font-weight: 600;
-      font-size: 0.8rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      transition: background 0.2s ease, transform 0.1s ease;
-    }
-    a:hover { background: #CC0000; }
-    a:active { transform: scale(0.98); }
-    .rule-bottom { height: 1px; background: #111111; margin-top: 2rem; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="rule"></div>
-    <div class="label">THE SNIP GAZETTE — ERROR DISPATCH</div>
-    <div class="code">404</div>
-    <h1>Link Not Found</h1>
-    <p>The short link you're looking for doesn't exist or may have been removed.</p>
-    <a href="/">← BACK TO HOME</a>
-    <div class="rule-bottom"></div>
-  </div>
-</body>
-</html>`;
-}
-
-module.exports = router;
+export default router;

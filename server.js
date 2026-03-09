@@ -1,28 +1,58 @@
-const express = require('express');
-const path = require('path');
+import express from 'express';
+import session from 'express-session';
+import ConnectPgSimple from 'connect-pg-simple';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
 
-// Initialize database (creates tables on import)
-require('./database');
+import authRoutes from './routes/auth.js';
+import apiRoutes from './routes/api.js';
+import redirectRoutes from './routes/redirect.js';
+import pool from './database.js'; // to pass to session store
 
-const apiRoutes = require('./routes/api');
-const redirectRoutes = require('./routes/redirect');
+dotenv.config();
+
+const pgSession = ConnectPgSimple(session);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from /public
+// Session configuration using connect-pg-simple
+app.use(session({
+    store: new pgSession({
+        pool: pool,
+        createTableIfMissing: true
+    }),
+    secret: 'super-secret-production-key-change-me',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production'
+    }
+}));
+
+// Route for static files (vanilla HTML/JS/CSS frontend)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// API routes
+// API Routes
+app.use('/api/auth', authRoutes);
 app.use('/api', apiRoutes);
 
-// Redirect routes — mounted AFTER static files to avoid conflicts
+// Redirect Route / Short URL resolution (must come after APIs and statics)
 app.use('/', redirectRoutes);
 
-// Start server
+// Fallback for SPA routing to dashboard or index
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`Server is running smoothly on http://localhost:${PORT}`);
 });

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZapURL - Control Room</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <div id="toast-container"></div>
+
+    <div class="container newspaper-grid split-66-33"
+        style="padding-top: 2rem; border-bottom: var(--border-thick); margin-bottom: 2rem; align-items: end;">
+        <div style="padding-bottom: 0; margin-bottom: 0; border-right: none;">
+            <div class="logo">The ZapURL Times</div>
+        </div>
+        <div style="text-align: right; padding-bottom: 0.5rem; font-family: var(--font-mono); font-size: 0.875rem;">
+            <div>EDITOR IN CHIEF: <span id="username-display"
+                    style="font-weight: bold; color: var(--accent-red);">USER</span></div>
+            <button id="logout-btn" class="btn-secondary btn-sm" style="margin-top: 0.5rem;">CESSATION</button>
+        </div>
+    </div>
+
+    <div class="container newspaper-grid" style="padding-top: 0;">
+        <div class="card" style="border: var(--border-thick); padding: 2rem;">
+            <h2 style="border-bottom: none; margin-bottom: 0;">Publish New Link</h2>
+            <form id="create-link-form"
+                style="display: grid; grid-template-columns: 1fr auto auto; gap: 2rem; align-items: end; margin-top: 1rem;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="url-input">Destination URL</label>
+                    <input type="url" id="url-input" required placeholder="https://...">
+                </div>
+                <div class="form-group" style="margin-bottom: 0; min-width: 120px;">
+                    <label for="max-clicks">Max Impressions (Opt)</label>
+                    <input type="number" id="max-clicks" min="1">
+                </div>
+                <button type="submit" class="btn-primary" id="create-btn">
+                    Shorten
+                </button>
+            </form>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <h3
+                style="font-family: var(--font-serif); font-size: 1.5rem; border-bottom: var(--border-thin); padding-bottom: 0.5rem; margin-bottom: 0;">
+                Circulating Links</h3>
+            <div id="links-container" class="links-grid">
+                <!-- Links will be injected here via JS -->
+                <p class="ui-text" style="grid-column: 1 / -1; padding: 1rem;">Querying printing press...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal" id="edit-modal">
+        <div class="modal-content">
+            <h2 style="font-family: var(--font-serif);">Amend Route</h2>
+            <form id="edit-link-form">
+                <input type="hidden" id="edit-link-id">
+                <div class="form-group">
+                    <label for="edit-url-input">New Destination URL</label>
+                    <input type="url" id="edit-url-input" required>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="button" class="btn-secondary" id="cancel-edit" style="width: 50%;">ABORT</button>
+                    <button type="submit" class="btn-primary" style="width: 50%;">SUBMIT</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/dashboard.js"></script>
+</body>
+
+</html>

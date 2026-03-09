@@ -1,15 +1,20 @@
 {
   "name": "url-shortener",
   "version": "1.0.0",
-  "description": "A production-quality URL shortener with analytics",
+  "description": "Production URL Shortener",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js"
   },
   "dependencies": {
-    "better-sqlite3": "^11.7.0",
-    "express": "^4.21.0",
-    "nanoid": "^3.3.8"
+    "bcryptjs": "^2.4.3",
+    "connect-pg-simple": "^10.0.0",
+    "dotenv": "^17.3.1",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "nanoid": "^5.0.8",
+    "pg": "^8.20.0"
   }
 }

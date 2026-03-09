@@ -4,112 +4,95 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Snip — URL Shortener</title>
-  <meta name="description"
-    content="Transform long URLs into powerful short links with built-in analytics. Fast, free, and beautifully designed.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
-    rel="stylesheet">
+  <title>ZapURL - Link Edition</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
+  <div id="toast-container"></div>
 
-  <!-- Newsprint grain overlay -->
-  <div class="bg-grain"></div>
+  <div class="container newspaper-grid split-66-33">
 
-  <!-- Masthead -->
-  <header class="masthead">
-    <div class="masthead__rule masthead__rule--heavy"></div>
-    <div class="masthead__inner">
-      <span class="masthead__edition">EST. 2026 — DIGITAL EDITION</span>
-      <h1 class="masthead__title">THE SNIP GAZETTE</h1>
-      <span class="masthead__tagline">YOUR TRUSTED SOURCE FOR SHORT LINKS</span>
+    <!-- Main Column / Content -->
+    <div>
+      <header style="border-bottom: 0; margin-bottom: 1rem; padding-bottom: 0;">
+        <div class="logo">The ZapURL Times</div>
+      </header>
+      <div style="border-bottom: var(--border-thick); margin-bottom: 2rem; padding-bottom: 0.5rem;" class="header-meta">
+        VOL. I ... NO. 1. &mdash; NEW YORK, TODAY. &mdash; TWO CENTS.
+      </div>
+
+      <h1 style="border-bottom: none; font-size: 3.5rem;">Manage your links with editorial precision</h1>
+      <p class="drop-cap">Shorten, direct, and measure analytics using the power of the press. Create custom links, set
+        expiry boundaries, and control traffic to destinations globally.</p>
+      <br />
+
+      <div class="inverted-section">
+        <h2 style="border-bottom-color: rgba(255,255,255,0.2);">How it works</h2>
+        <div
+          style="display: flex; flex-direction: column; gap: 1rem; font-family: var(--font-serif); font-size: 1.125rem;">
+          <div><span class="num-step">1. </span>Register your identity.</div>
+          <div><span class="num-step">2. </span>Input a lengthy, unwieldy destination.</div>
+          <div><span class="num-step">3. </span>Receive a condensed, manageable code ready for circulation.</div>
+        </div>
+      </div>
     </div>
-    <div class="masthead__rule masthead__rule--thin"></div>
-    <div class="masthead__rule masthead__rule--double"></div>
-  </header>
 
-  <main class="container">
-
-    <!-- Hero Section -->
-    <section class="hero" id="hero">
-      <div class="hero__content">
-        <p class="hero__dateline">BREAKING — URL INTELLIGENCE</p>
-        <h2 class="hero__title">Shorten. Share. Track.</h2>
-        <p class="hero__subtitle">Transform long URLs into powerful short links with built-in analytics</p>
-      </div>
-    </section>
-
-    <div class="divider divider--heavy"></div>
-
-    <!-- URL Input Section -->
-    <section class="shorten-section" id="shorten-section">
-      <span class="section-label">SUBMIT A URL</span>
-      <form class="shorten-form" id="shorten-form" novalidate>
-        <div class="shorten-form__input-wrapper">
-          <input type="url" id="url-input" class="shorten-form__input" placeholder="Paste your long URL here..."
-            autocomplete="off" spellcheck="false" required>
-          <span class="shorten-form__validation" id="input-validation"></span>
-        </div>
-        <button type="submit" class="shorten-form__button" id="shorten-button">
-          <span class="shorten-form__button-text" id="button-text">SHORTEN →</span>
-          <span class="shorten-form__spinner" id="button-spinner"></span>
-        </button>
-      </form>
-    </section>
-
-    <!-- Result Display (hidden by default) -->
-    <section class="result-section" id="result-section" aria-hidden="true">
-      <div class="result-card">
-        <div class="result-card__header">
-          <span class="result-card__label">YOUR SHORTENED URL</span>
-        </div>
-        <div class="result-card__body">
-          <a href="#" class="result-card__short-url" id="result-short-url" target="_blank"
-            rel="noopener noreferrer"></a>
-          <button class="result-card__copy-btn" id="result-copy-btn" type="button">
-            <span id="result-copy-text">COPY</span>
+    <!-- Sidebar / Forms -->
+    <div style="padding-top: 2rem;">
+      <!-- Auth Forms -->
+      <div id="auth-forms">
+        <!-- Login Form -->
+        <form id="login-form">
+          <h2>Authentication</h2>
+          <div class="form-group">
+            <label for="login-id">Username or Email</label>
+            <input type="text" id="login-id" required>
+          </div>
+          <div class="form-group">
+            <label for="login-password">Passcode</label>
+            <input type="password" id="login-password" required>
+          </div>
+          <button type="submit" class="btn-primary" id="login-btn" style="width: 100%;">
+            Authorize Access
           </button>
-        </div>
-        <p class="result-card__original" id="result-original-url"></p>
+          <div class="text-center mt-4" style="border-top: var(--border-thin); padding-top: 1rem;">
+            <span style="font-size: 0.875rem; font-family: var(--font-sans); color: var(--text-muted);">UNREGISTERED?
+            </span><a href="#" id="show-register"
+              style="font-family: var(--font-sans); text-transform: uppercase;">Enlist Here</a>
+          </div>
+        </form>
+
+        <!-- Register Form -->
+        <form id="register-form" class="hidden">
+          <h2>New Registry</h2>
+          <div class="form-group">
+            <label for="reg-username">Username Alias</label>
+            <input type="text" id="reg-username" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-email">Electronic Mail</label>
+            <input type="email" id="reg-email" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-password">Passcode (Min 6)</label>
+            <input type="password" id="reg-password" required minlength="6">
+          </div>
+          <button type="submit" class="btn-primary" id="register-btn" style="width: 100%;">
+            Establish Identity
+          </button>
+          <div class="text-center mt-4" style="border-top: var(--border-thin); padding-top: 1rem;">
+            <span style="font-size: 0.875rem; font-family: var(--font-sans); color: var(--text-muted);">ALREADY
+              ENLISTED? </span><a href="#" id="show-login"
+              style="font-family: var(--font-sans); text-transform: uppercase;">Return to Login</a>
+          </div>
+        </form>
       </div>
-    </section>
+    </div>
 
-    <div class="divider divider--heavy"></div>
+  </div>
 
-    <!-- Links Dashboard Section -->
-    <section class="dashboard-section" id="dashboard-section">
-      <div class="dashboard-section__header">
-        <h2 class="dashboard-section__title">
-          YOUR LINKS
-          <span class="dashboard-section__count" id="links-count"></span>
-        </h2>
-      </div>
-
-      <!-- Empty State -->
-      <div class="empty-state" id="empty-state">
-        <p class="empty-state__text">No links yet. Shorten your first URL above!</p>
-      </div>
-
-      <!-- Links List -->
-      <div class="links-list" id="links-list"></div>
-    </section>
-
-  </main>
-
-  <!-- Footer rule -->
-  <footer class="footer">
-    <div class="divider divider--heavy"></div>
-    <p class="footer__text">© 2026 THE SNIP GAZETTE — ALL LINKS RESERVED</p>
-  </footer>
-
-  <!-- Toast Container -->
-  <div class="toast-container" id="toast-container"></div>
-
-  <script src="/js/app.js"></script>
+  <script src="/js/auth.js"></script>
 </body>
 
 </html>

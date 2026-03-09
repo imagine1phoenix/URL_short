@@ -1,26 +1,47 @@
-const Database = require('better-sqlite3');
-const path = require('path');
+import pkg from 'pg';
+import dotenv from 'dotenv';
 
-// Initialize SQLite database
-const db = new Database(path.join(__dirname, 'url_shortener.db'));
+dotenv.config();
 
-// Enable WAL mode for better concurrent read/write performance
-db.pragma('journal_mode = WAL');
+const { Pool } = pkg;
 
-// Create the links table if it doesn't exist
-db.exec(`
-  CREATE TABLE IF NOT EXISTS links (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    original_url TEXT NOT NULL,
-    short_code TEXT UNIQUE NOT NULL,
-    clicks INTEGER DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`);
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
-// Create index on short_code for fast lookups
-db.exec(`
-  CREATE INDEX IF NOT EXISTS idx_short_code ON links(short_code)
-`);
+// Initialize database tables
+const initDB = async () => {
+  const client = await pool.connect();
+  try {
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS users (
+          id SERIAL PRIMARY KEY,
+          username VARCHAR(255) UNIQUE NOT NULL,
+          email VARCHAR(255) UNIQUE NOT NULL,
+          password VARCHAR(255) NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+      
+      CREATE TABLE IF NOT EXISTS links (
+          id SERIAL PRIMARY KEY,
+          user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          original_url TEXT NOT NULL,
+          short_code VARCHAR(50) UNIQUE NOT NULL,
+          clicks INTEGER DEFAULT 0,
+          max_clicks INTEGER DEFAULT NULL,
+          is_active SMALLINT DEFAULT 1,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          last_accessed_at TIMESTAMP DEFAULT NULL
+      );
+    `);
+    console.log("Database initialized successfully.");
+  } catch (error) {
+    console.error("Error initializing database:", error);
+  } finally {
+    client.release();
+  }
+};
 
-module.exports = db;
+initDB();
+
+export default pool;
